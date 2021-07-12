@@ -1,0 +1,32 @@
+@font-face {
+	font-family: 'Aldrich';
+	src: url('/font/Aldrich-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'DarkerGrotesque';
+	src: url('/font/DarkerGrotesque-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'Economica';
+	src: url('/font/Economica-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'Yomogi';
+	src: url('/font/Yomogi-Regular.ttf');
+}
+
+
+.logo-font {
+  font-family: 'Economica';
+}
+
+body{
+  font-family: 'DarkerGrotesque', 'Yomogi';
+}
+
+.name{
+  font-family: 'Aldrich';
+}

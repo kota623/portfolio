@@ -1,0 +1,38 @@
+version: '3.3'
+volumes:
+  php-fpm-socket:
+  db-store:
+  db_data:
+services:
+  app:
+    build: ./infra/docker/php
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./backend:/work/backend
+
+  web:
+    build: ./infra/docker/nginx
+    ports:
+      - 8022:8000
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./backend:/work/backend
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 8025:8025
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    environment:
+      DOMAINS: 'example.com -> http://web:8000'
+      STAGE: 'production'
+      HSTS_MAX_AGE: 60
+      CLIENT_MAX_BODY_SIZE: 10M
+    volumes:
+      - /data/ssl_certs:/var/lib/https-portal

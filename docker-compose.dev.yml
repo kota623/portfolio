@@ -1,0 +1,51 @@
+version: '3.3'
+volumes:
+  php-fpm-socket:
+  db-store:
+services:
+  app:
+    build: ./infra/docker/php
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./backend:/work/backend
+
+  web:
+    build: ./infra/docker/nginx
+    ports:
+      - 8000:8000
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./backend:/work/backend
+
+  postgresql:
+    image: postgres:10.5
+    container_name: postgresql
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: local
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
+    hostname: postgres
+    restart: always
+    user: root
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 8025:8025
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    environment:
+      DOMAINS: 'localhost -> http://web:8000'
+      STAGE: 'local'
+    volumes:
+      - ./data/ssl_certs:/var/lib/https-portal
